@@ -39,7 +39,8 @@ public class LoginActivity extends AppCompatActivity {
         viewModel.getError().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                loginError.setVisibility(View.VISIBLE);
+                //loginError.setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
             }
         });
 

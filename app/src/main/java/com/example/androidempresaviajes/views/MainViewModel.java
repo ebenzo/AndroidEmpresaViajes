@@ -12,6 +12,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.androidempresaviajes.request.ApiClient;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,7 +22,7 @@ public class MainViewModel extends AndroidViewModel {
 
     private Context contexto;
     private MutableLiveData<String> token;
-    private MutableLiveData<String> error;
+    private MutableLiveData<String> res;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -28,11 +30,11 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public LiveData<String> getError() {
-        if (error == null) {
-            error = new MutableLiveData<>();
+        if (res == null) {
+            res = new MutableLiveData<>();
         }
 
-        return  error;
+        return  res;
     }
 
     public LiveData<String> getToken() {
@@ -52,17 +54,22 @@ public class MainViewModel extends AndroidViewModel {
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     token.postValue(response.body());
-                    SharedPreferences sp = contexto.getSharedPreferences("token", 0);//0 porque es privado?
+                    SharedPreferences sp = contexto.getSharedPreferences("Token", 0);//0 porque es privado?
                     SharedPreferences.Editor editor = sp.edit();
                     String t = "Bearer " + response.body();
-                    editor.putString("token", t);
+                    editor.putString("Token", t);
                     editor.commit();
                     Log.d("salida ultimo token ", t);
 
-                    error.postValue("login correcto");
+                    res.postValue("login correcto");
                 }
                 else {
-                    Log.d("Error en response ", "mal salio algo");
+                    Log.d("Error en response ", "mal salio algo");//response.errorBody().string()
+                    try {
+                        res.postValue(response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
@@ -70,6 +77,7 @@ public class MainViewModel extends AndroidViewModel {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d("algo salio mal: ", t.getMessage());
+                res.postValue("Ocurrió un error al loguear");
             }
         });
     }

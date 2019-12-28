@@ -45,7 +45,7 @@ public class DrawerActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_perfil, R.id.nav_viajes, R.id.nav_pasajeros,
+                R.id.nav_perfil, R.id.nav_password, R.id.nav_viajes, R.id.nav_pasajeros,
                 R.id.nav_tools, R.id.nav_reservas, R.id.nav_cerrarSesion)
                 .setDrawerLayout(drawer)
                 .build();
@@ -66,5 +66,9 @@ public class DrawerActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }
